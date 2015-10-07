@@ -1,0 +1,2 @@
+class MovementOperation:
+    pass
