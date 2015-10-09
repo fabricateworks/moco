@@ -6,6 +6,8 @@ import moco.motors.base
 class Servo(moco.motors.base.Motor):
 
     def __init__(self, rotary_encoder=None):
+        super(Servo, self).__init__()
+
         self.rotary_encoder = None
         if not rotary_encoder:
             self.rotary_encoder = moco.sensors.rotary_encoder.RotaryEncoder()
@@ -15,6 +17,10 @@ class Servo(moco.motors.base.Motor):
         # Positive is clockwise
         self._speed = 0.0
         self._rotates = None
+
+    @property
+    def rotation(self):
+        return self.rotary_encoder.rotation
 
     @property
     def speed(self):
@@ -33,7 +39,9 @@ class Servo(moco.motors.base.Motor):
         self._rotates = rotates
 
     def tick(self):
-        speed = self.speed / (moco.config.HERTZ * 60)
+        # Went want to increment the rotation by RPM divided by 60 (seconds)
+        # combined with number of ticks per second.
+        rotation = self.speed / (moco.config.HERTZ * 60.0)
         # self.rotates.rotate(self.speed)
-        self.perfect_rotation += speed
-        self.rotary_encoder.rotation += speed
+        self.perfect_rotation += rotation
+        self.rotary_encoder.rotation += rotation
